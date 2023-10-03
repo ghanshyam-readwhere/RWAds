@@ -23,12 +23,19 @@ import com.google.android.gms.ads.VideoController;
 import com.google.android.gms.ads.VideoOptions;
 import com.google.android.gms.ads.admanager.AdManagerAdRequest;
 import com.google.android.gms.ads.admanager.AppEventListener;
+import com.google.android.gms.ads.admanager.zzb;
+import com.google.android.gms.ads.internal.client.zzay;
+import com.google.android.gms.ads.internal.client.zzbs;
 import com.google.android.gms.common.internal.Preconditions;
-import com.google.android.gms.internal.ads.zzbfn;
+import com.google.android.gms.internal.ads.zzbiu;
+import com.google.android.gms.internal.ads.zzbjc;
+import com.google.android.gms.internal.ads.zzbkq;
+import com.google.android.gms.internal.ads.zzcge;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.concurrent.ExecutorService;
 
 public class AdManagerAdView extends BaseAdView {
 
@@ -37,65 +44,54 @@ public class AdManagerAdView extends BaseAdView {
     private View view;
     private Context context;
 
+    @NonNull
+    public VideoController getVideoController() {
+        return this.zza.zzf();
+    }
 
-    public AdManagerAdView( Context context) {
+    @Nullable
+    public VideoOptions getVideoOptions() {
+        return this.zza.zzg();
+    }
+
+    @Nullable
+    public AppEventListener getAppEventListener() {
+        return this.zza.zzh();
+    }
+
+    public AdManagerAdView(@NonNull Context context) {
         super(context, 0);
         this.context = context;
         Preconditions.checkNotNull(context, "Context cannot be null");
     }
 
-    public AdManagerAdView( Context context,  AttributeSet attrs) {
+    public AdManagerAdView(@NonNull Context context, @NonNull AttributeSet attrs) {
         super(context, attrs, true);
         Preconditions.checkNotNull(context, "Context cannot be null");
     }
 
-    public AdManagerAdView( Context context,  AttributeSet attrs, int defStyle) {
+    public AdManagerAdView(@NonNull Context context, @NonNull AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle, 0, true);
         Preconditions.checkNotNull(context, "Context cannot be null");
     }
 
-    
-    public VideoController getVideoController() {
-        return this.zza.zzw();
-    }
-
-    public void setVideoOptions( VideoOptions videoOptions) {
-        this.zza.zzy(videoOptions);
-    }
-
-    public VideoOptions getVideoOptions() {
-        return this.zza.zzz();
-    }
-
-    public AdSize[] getAdSizes() {
-        return this.zza.zze();
-    }
-
-    public AppEventListener getAppEventListener() {
-        return this.zza.zzg();
-    }
-
     @RequiresPermission("android.permission.INTERNET")
-    public void loadAd( AdManagerAdRequest adManagerAdRequest) {
+    public void loadAd(@NonNull AdManagerAdRequest adManagerAdRequest) {
+
         if(view != null && adUnitListing.size() != 0) {
             loadMediationAd(adUnitListing.get(0));
         }else {
-            this.zza.zzh(adManagerAdRequest.zza());
+            super.loadAd(adManagerAdRequest);
         }
-
-    }
-
-    public void setManualImpressionsEnabled(boolean manualImpressionsEnabled) {
-        this.zza.zzr(manualImpressionsEnabled);
     }
 
     public void recordManualImpression() {
-        this.zza.zzj();
+        this.zza.zzo();
     }
 
-    public void setAdSizes( AdSize... adSizes) {
+    public void setAdSizes(@NonNull AdSize... adSizes) {
         if (adSizes != null && adSizes.length > 0) {
-            this.zza.zzo(adSizes);
+            this.zza.zzt(adSizes);
         } else {
             IllegalArgumentException var2 = new IllegalArgumentException("The supported ad sizes must contain at least one valid ad size.");
             throw var2;
@@ -103,14 +99,25 @@ public class AdManagerAdView extends BaseAdView {
     }
 
     public void setAppEventListener(@Nullable AppEventListener appEventListener) {
-        this.zza.zzq(appEventListener);
+        this.zza.zzv(appEventListener);
     }
 
-    public final boolean zza(zzbfn var1) {
-        return this.zza.zzA(var1);
+    public void setManualImpressionsEnabled(boolean manualImpressionsEnabled) {
+        this.zza.zzw(manualImpressionsEnabled);
     }
 
+    public void setVideoOptions(@NonNull VideoOptions videoOptions) {
+        this.zza.zzy(videoOptions);
+    }
 
+    @Nullable
+    public AdSize[] getAdSizes() {
+        return this.zza.zzB();
+    }
+
+    public final boolean zzb(zzbs var1) {
+        return this.zza.zzz(var1);
+    }
     public void updateAdsWithRwFlow(View linearLayout, @NotNull ArrayList<String> list) {
         this.view = linearLayout;
         adUnitListing = list;
@@ -136,7 +143,7 @@ public class AdManagerAdView extends BaseAdView {
             ((CardView) view).removeAllViews();
             ((CardView) view).addView(adView);
         }
-        AdRequest request = new AdRequest.Builder().build();
+        AdManagerAdRequest request = new AdManagerAdRequest.Builder().build();
         adView.setAdSize(adSize);
         adView.setAdUnitId(adUnitId);
         adView.loadAd(request);

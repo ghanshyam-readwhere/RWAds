@@ -31,7 +31,7 @@ class AdManagerActivity : AppCompatActivity() {
         linearLayout.removeAllViews()
         linearLayout.addView(adManager)
         val request = AdManagerAdRequest.Builder().build()
-        adManager.adSize = AdSize.LARGE_BANNER
+        adManager.setAdSizes(AdSize(320,50))
         adManager.adUnitId ="/6499/example/banner"
         adManager.updateAdsWithRwFlow(linearLayout,list)
 
