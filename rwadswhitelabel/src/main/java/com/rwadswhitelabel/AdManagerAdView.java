@@ -15,7 +15,6 @@ import androidx.cardview.widget.CardView;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.google.android.gms.ads.AdListener;
-import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdSize;
 import com.google.android.gms.ads.BaseAdView;
 import com.google.android.gms.ads.LoadAdError;
@@ -23,19 +22,12 @@ import com.google.android.gms.ads.VideoController;
 import com.google.android.gms.ads.VideoOptions;
 import com.google.android.gms.ads.admanager.AdManagerAdRequest;
 import com.google.android.gms.ads.admanager.AppEventListener;
-import com.google.android.gms.ads.admanager.zzb;
-import com.google.android.gms.ads.internal.client.zzay;
 import com.google.android.gms.ads.internal.client.zzbs;
 import com.google.android.gms.common.internal.Preconditions;
-import com.google.android.gms.internal.ads.zzbiu;
-import com.google.android.gms.internal.ads.zzbjc;
-import com.google.android.gms.internal.ads.zzbkq;
-import com.google.android.gms.internal.ads.zzcge;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
-import java.util.concurrent.ExecutorService;
 
 public class AdManagerAdView extends BaseAdView {
 
@@ -118,9 +110,13 @@ public class AdManagerAdView extends BaseAdView {
     public final boolean zzb(zzbs var1) {
         return this.zza.zzz(var1);
     }
-    public void updateAdsWithRwFlow(View linearLayout, @NotNull ArrayList<String> list) {
+    public void updateAdsWithRwFlow(View linearLayout) {
         this.view = linearLayout;
-        adUnitListing = list;
+        String adUnitId = super.getAdUnitId();
+        AppConfiguration appConfiguration = AppConfiguration.getInstance(context);
+        if (appConfiguration.getAdsPosition().containsKey(adUnitId)) {
+            adUnitListing = appConfiguration.getAdsMediationListings().get(appConfiguration.getAdsPosition().get(adUnitId)).getMediationsAdunits();
+        }
     }
 
     private void loadMediationAd(String adUnitId){

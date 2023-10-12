@@ -64,9 +64,14 @@ public class AdView extends BaseAdView {
         }
 
     }
-    public void updateAdsWithRwFlow(@Nullable LinearLayout linearLayout, @NotNull ArrayList<String> list) {
+    public void updateAdsWithRwFlow(@Nullable LinearLayout linearLayout) {
         this.view = linearLayout;
-        adUnitListing = list;
+        String adUnitId = super.getAdUnitId();
+        AppConfiguration appConfiguration = AppConfiguration.getInstance(context);
+        if (appConfiguration.getAdsPosition().containsKey(adUnitId)) {
+            adUnitListing = appConfiguration.getAdsMediationListings().get(appConfiguration.getAdsPosition().get(adUnitId)).getMediationsAdunits();
+        }
+
     }
 
     private void loadMediationAd(String adUnitId){

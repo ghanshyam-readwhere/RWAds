@@ -30,8 +30,44 @@
     android:text="Ad Manager"
     android:textAllCaps="false"
     android:id="@+id/btnAdManagerView"
-    android:textColor="@android:color/white"
+    android:textColor="@android:color/white" />
+<androidx.appcompat.widget.AppCompatButton
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toBottomOf="@+id/btnAdManagerView"
+    app:layout_constraintEnd_toEndOf="parent"
+    android:layout_marginTop="40dp"
+    android:background="@android:color/black"
+    android:text="AdManager Interstitial"
+    android:textAllCaps="false"
+    android:id="@+id/btnInt"
+    android:textColor="@android:color/white" />
+<androidx.appcompat.widget.AppCompatButton
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toBottomOf="@+id/btnInt"
+    app:layout_constraintEnd_toEndOf="parent"
+    android:layout_marginTop="40dp"
+    android:background="@android:color/black"
+    android:text="AdMob Interstitial"
+    android:textAllCaps="false"
+    android:id="@+id/btnAdMobInt"
+    android:textColor="@android:color/white" />
 
-    />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btnAdMobInt"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="40dp"
+        android:background="@android:color/black"
+        android:text="Native Ads"
+        android:textAllCaps="false"
+        android:id="@+id/btnNativeAds"
+        android:textColor="@android:color/white" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

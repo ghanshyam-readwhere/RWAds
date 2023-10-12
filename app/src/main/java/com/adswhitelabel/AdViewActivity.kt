@@ -20,11 +20,7 @@ class AdViewActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_adview)
 
-        val list : ArrayList<String> = ArrayList()
-        list.add("ca-app-pub-3940256099942544/6300978110")
-        list.add("ca-app-pub-3940256099942544/6300978119")
-        list.add("ca-app-pub-3940256099942544/6300978118")
-        list.add("ca-app-pub-3940256099942544/6300978111")
+
 
         linearLayout = findViewById(R.id.linearLayout)
         linearLayout.removeAllViews()
@@ -33,7 +29,7 @@ class AdViewActivity : AppCompatActivity() {
         val request = AdRequest.Builder().build()
         adView.setAdSize(AdSize.LARGE_BANNER)
         adView.adUnitId ="ca-app-pub-3940256099942544/6300978111"
-        adView.updateAdsWithRwFlow(linearLayout,list)
+        adView.updateAdsWithRwFlow(linearLayout)
         adView.loadAd(request)
 
         adView.adListener = object : AdListener() {

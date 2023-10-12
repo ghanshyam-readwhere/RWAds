@@ -27,7 +27,13 @@
 
         <activity android:name=".AdViewActivity"
             android:exported="false"/>
+        <activity android:name=".NativeAdActivity"
+            android:exported="false"/>
         <activity android:name=".AdManagerActivity"
+            android:exported="false"/>
+        <activity android:name=".InterstitialActivity"
+            android:exported="false"/>
+        <activity android:name=".AdMobInterstitialActivity"
             android:exported="false"/>
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
