@@ -22,7 +22,7 @@ class MainActivity : AppCompatActivity() {
         btnInt = findViewById(R.id.btnInt)
         btnAdMobInt = findViewById(R.id.btnAdMobInt)
         btnNativeAds = findViewById(R.id.btnNativeAds)
-        RwAdsIntialize.init(this,"1234567890")
+        RwAdsIntialize.init(this,"")
         btnAdView.setOnClickListener {
             startActivity(Intent(this,AdViewActivity::class.java))
         }

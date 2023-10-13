@@ -64,7 +64,7 @@ public class AdView extends BaseAdView {
         }
 
     }
-    public void updateAdsWithRwFlow(@Nullable LinearLayout linearLayout) {
+    public void updateAdsWithRwFlow(@Nullable View linearLayout) {
         this.view = linearLayout;
         String adUnitId = super.getAdUnitId();
         AppConfiguration appConfiguration = AppConfiguration.getInstance(context);
