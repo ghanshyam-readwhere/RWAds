@@ -118,9 +118,13 @@ public class AdView extends BaseAdView {
             int percent = AppConfiguration.getInstance(context).getRw_overwrite();
             int rwRequest = RwAdsIntialize.getIntegerShared(originalId+"_"+AdRequestReadWhere);
             int originalRequest = RwAdsIntialize.getIntegerShared(originalId+"_"+AdRequestOriginal);
-
-            if(percent != 0 && (rwRequest+originalRequest) != 0 &&rwRequest * 100/(rwRequest+originalRequest) < percent){
-                Collections.rotate(adUnitListing,-1);
+            if(percent == 0){
+                rwRequest = 0;
+                originalRequest = 0;
+            }else {
+                if ((rwRequest + originalRequest) != 0 && rwRequest * 100 / (rwRequest + originalRequest) < percent) {
+                    Collections.rotate(adUnitListing, -1);
+                }
             }
             loadMediationAd(originalId,adUnitListing.get(0),rwRequest,originalRequest);
 

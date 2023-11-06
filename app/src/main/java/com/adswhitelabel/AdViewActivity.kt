@@ -29,7 +29,7 @@ class AdViewActivity : AppCompatActivity() {
         linearLayout.addView(adView)
         val request = AdRequest.Builder().build()
         adView.setAdSize(AdSize.LARGE_BANNER)
-        adView.adUnitId ="/6499/example/bannerr"
+        adView.adUnitId ="/1009127/Readwhere_App_Banner_android_home_bet_section"
 //        adView.updateAdsWithRwFlow(linearLayout)
         adView.loadAd(request)
 

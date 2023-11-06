@@ -31,7 +31,7 @@ class AdManagerActivity : AppCompatActivity() {
         linearLayout.addView(adManager)
         val request = AdManagerAdRequest.Builder().build()
         adManager.setAdSizes(AdSize(320,100))
-        adManager.adUnitId ="/6499/example/bannerr"
+        adManager.adUnitId ="/1009127/Readwhere_App_Banner_android_home_top"
 //        adManager.updateAdsWithRwFlow(linearLayout)
 
         adManager.loadAd(request)

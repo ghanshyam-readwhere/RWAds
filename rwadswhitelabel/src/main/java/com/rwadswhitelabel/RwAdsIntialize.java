@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonObject;
 import com.rwadswhitelabel.models.ConfigResponses;
 import com.rwadswhitelabel.network.RetrofitClient;
 
@@ -13,6 +12,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Map;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -35,6 +35,11 @@ public class RwAdsIntialize {
                     AppConfiguration.getInstance(context).setRequestBatch(response.body().getRequestBatch()== 1);
                     AppConfiguration.getInstance(context).setAutoRefresh(response.body().getAutoRefresh());
                     saveStringShared("config",new Gson().toJson(response.body()));
+                    if(getIntegerShared("rw_overwrite_val") !=response.body().getRw_overwrite() ){
+                        saveIntegerShared("rw_overwrite_val",response.body().getRw_overwrite());
+                        clearSavedShared();
+                    }
+
                 }else {
                     try {
                         ConfigResponses configResponses = new Gson().fromJson(getStringShared("config"),ConfigResponses.class);
@@ -89,6 +94,21 @@ public class RwAdsIntialize {
         SharedPreferences shared = appContext.getSharedPreferences("", Context.MODE_PRIVATE);
         return shared.getInt(key, 0);
     }
+    public static void clearSavedShared (){
+        Object[] savedData = getAllIntegerShared().keySet().toArray();
+        for(int count =0;count<savedData.length;count++){
+            if(savedData[count].toString().contains(AdRequestReadWhere) || savedData[count].toString().contains(AdRequestOriginal)){
+                saveIntegerShared(savedData[count].toString(),0);
+            }
+        }
+
+    }
+
+    public static Map<String, ?> getAllIntegerShared() {
+        SharedPreferences shared = appContext.getSharedPreferences("", Context.MODE_PRIVATE);
+        return shared.getAll();
+    }
+
     public static String getStringShared( String key) {
         SharedPreferences shared = appContext.getSharedPreferences("", Context.MODE_PRIVATE);
         return shared.getString(key, "");
