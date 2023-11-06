@@ -23,13 +23,14 @@ class AdViewActivity : AppCompatActivity() {
 
 
         linearLayout = findViewById(R.id.linearLayout)
-        linearLayout.removeAllViews()
+
         adView = AdView(this)
+        linearLayout.removeAllViews()
         linearLayout.addView(adView)
         val request = AdRequest.Builder().build()
         adView.setAdSize(AdSize.LARGE_BANNER)
-        adView.adUnitId ="ca-app-pub-3940256099942544/6300978111"
-        adView.updateAdsWithRwFlow(linearLayout)
+        adView.adUnitId ="/6499/example/bannerr"
+//        adView.updateAdsWithRwFlow(linearLayout)
         adView.loadAd(request)
 
         adView.adListener = object : AdListener() {

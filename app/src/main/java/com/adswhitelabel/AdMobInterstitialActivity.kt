@@ -21,7 +21,7 @@ class AdMobInterstitialActivity : AppCompatActivity() {
 
         val adRequest: AdRequest = AdRequest.Builder().build()
 
-        InterstitialAd.load(this, "ca-app-pub-3940256099942544/1033173712", adRequest,
+        InterstitialAd.load(this, "/1009127,58180893/Tribune_Android_INT", adRequest,
             object : InterstitialAdLoadCallback() {
                  override fun onAdLoaded(interstitialAd: InterstitialAd) {
                     // The mAdManagerInterstitialAd reference will be null until

@@ -1,0 +1,42 @@
+{
+  "status": true,
+  "rw_overwrite": 0,
+  "request_batch": 1,
+  "auto_refresh": 10,
+  "data": [
+    {
+      "original_id": "/6499/example/bannerr",
+      "ad_server": "ad_manager",
+      "switch_bet_native_to_banner": 0,
+      "is_native": 0,
+      "mediations_adunits": [
+        "/6499/example/bannerr",
+        "/6499/example/banner",
+        "/1009127/rw_home_top_0.8",
+        "/1009127/rw_home_top_0.6",
+        "/1009127/Readwhere_App_Banner_android_home_top"
+      ]
+    },
+    {
+      "original_id": "/1009127,58180893/Tribune_Android_INT",
+      "ad_server": "ad_manager",
+      "switch_bet_native_to_banner": 0,
+      "is_native": 0,
+      "mediations_adunits": [
+        "/1009127,58180893/Tribune_Android_INT",
+        "/6499/example/interstitial"
+      ]
+    },
+    {
+      "original_id": "/1009127/Readwhere_App_Banner_android_home_bottom",
+      "ad_server": "ad_manager",
+      "switch_bet_native_to_banner": 0,
+      "is_native": 0,
+      "mediations_adunits": [
+        "/1009127/Readwhere_App_Banner_android_home_bottom",
+        "/1009127/rw_home_bottom_0.8",
+        "/1009127/rw_home_bottom_0.6"
+      ]
+    }
+  ]
+}

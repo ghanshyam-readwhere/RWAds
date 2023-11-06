@@ -5,7 +5,12 @@ import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.gms.ads.AdSize
 import com.google.android.gms.ads.admanager.AdManagerAdRequest
+import com.google.android.gms.ads.identifier.AdvertisingIdClient
 import com.rwadswhitelabel.AdManagerAdView
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 //import com.google.android.gms.ads.admanager.AdManagerAdView
 
@@ -25,12 +30,15 @@ class AdManagerActivity : AppCompatActivity() {
         linearLayout.removeAllViews()
         linearLayout.addView(adManager)
         val request = AdManagerAdRequest.Builder().build()
-        adManager.setAdSizes(AdSize(320,50))
-        adManager.adUnitId ="/1009127/Readwhere_App_Banner_android_home_top"
-        adManager.updateAdsWithRwFlow(linearLayout)
+        adManager.setAdSizes(AdSize(320,100))
+        adManager.adUnitId ="/6499/example/bannerr"
+//        adManager.updateAdsWithRwFlow(linearLayout)
 
         adManager.loadAd(request)
 
+
+
     }
+
 
 }

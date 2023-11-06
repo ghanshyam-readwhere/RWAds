@@ -1,6 +1,11 @@
 package com.rwadswhitelabel;
 
+import static com.rwadswhitelabel.RwAdsIntialize.AdRequestOriginal;
+import static com.rwadswhitelabel.RwAdsIntialize.AdRequestReadWhere;
+
+import android.app.Activity;
 import android.content.Context;
+import android.os.Handler;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
@@ -15,6 +20,7 @@ import androidx.cardview.widget.CardView;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.google.android.gms.ads.AdListener;
+import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdSize;
 import com.google.android.gms.ads.BaseAdView;
 import com.google.android.gms.ads.LoadAdError;
@@ -28,6 +34,12 @@ import com.google.android.gms.common.internal.Preconditions;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 
 public class AdManagerAdView extends BaseAdView {
 
@@ -35,6 +47,15 @@ public class AdManagerAdView extends BaseAdView {
     private ArrayList<String> adUnitListing = new ArrayList<>();
     private View view;
     private Context context;
+
+    private boolean bulkLoad = false;
+    private HashMap<String,AdManagerAdView> loadedAds = new HashMap<>();
+    int loadedCount =0;
+    private boolean isLoaded = false;
+    private ScheduledExecutorService worker = Executors.newSingleThreadScheduledExecutor();
+    private ScheduledFuture future;
+    private int refreshInterval = 0;
+
 
     @NonNull
     public VideoController getVideoController() {
@@ -66,14 +87,80 @@ public class AdManagerAdView extends BaseAdView {
         super(context, attrs, defStyle, 0, true);
         Preconditions.checkNotNull(context, "Context cannot be null");
     }
-
+    @RequiresPermission("android.permission.INTERNET")
+    public void loadAds(@NonNull AdManagerAdRequest adManagerAdRequest) {
+        super.loadAd(adManagerAdRequest);
+    }
     @RequiresPermission("android.permission.INTERNET")
     public void loadAd(@NonNull AdManagerAdRequest adManagerAdRequest) {
+            this.view = (View) super.getParent();
+            String adUnitId = super.getAdUnitId();
+            AppConfiguration appConfiguration = AppConfiguration.getInstance(context);
+            if (appConfiguration.getAdsPosition().containsKey(adUnitId)) {
+                adUnitListing = new ArrayList<>();
+                adUnitListing.addAll(appConfiguration.getAdsMediationListings().get(appConfiguration.getAdsPosition().get(adUnitId)).getMediationsAdunits());
+                bulkLoad = appConfiguration.getRequestBatch();
+                refreshInterval = appConfiguration.getAutoRefresh();
+            }
 
         if(view != null && adUnitListing.size() != 0) {
-            loadMediationAd(adUnitListing.get(0));
+            if(refreshInterval!= 0){
+                refreshAd();
+            }
+            renderAds();
         }else {
             super.loadAd(adManagerAdRequest);
+        }
+    }
+
+    @RequiresPermission("android.permission.INTERNET")
+    public void loadAd(@NonNull AdRequest adRequest) {
+        this.view = (View) super.getParent();
+        String adUnitId = super.getAdUnitId();
+        AppConfiguration appConfiguration = AppConfiguration.getInstance(context);
+        if (appConfiguration.getAdsPosition().containsKey(adUnitId)) {
+            adUnitListing = new ArrayList<>();
+            adUnitListing.addAll(appConfiguration.getAdsMediationListings().get(appConfiguration.getAdsPosition().get(adUnitId)).getMediationsAdunits());
+            bulkLoad = appConfiguration.getRequestBatch();
+            refreshInterval = appConfiguration.getAutoRefresh();
+        }
+        if(view != null && adUnitListing.size() != 0) {
+            if(refreshInterval!= 0){
+                refreshAd();
+            }
+            renderAds();
+        }else {
+            super.loadAd(adRequest);
+        }
+    }
+
+    private void renderAds(){
+        if(bulkLoad){
+            isLoaded = false;
+            loadedCount = 0;
+            for(int count =0;count<adUnitListing.size();count++){
+                loadAdInBulk(adUnitListing.get(count),adUnitListing.size());
+            }
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    showAdFromBulkList();
+                }
+            },2500);
+        }else {
+            String originalId = adUnitListing.get(0);
+            int percent = AppConfiguration.getInstance(context).getRw_overwrite();
+            int rwRequest = RwAdsIntialize.getIntegerShared(originalId+"_"+AdRequestReadWhere);
+            int originalRequest = RwAdsIntialize.getIntegerShared(originalId+"_"+AdRequestOriginal);
+            if(percent == 0){
+                rwRequest = 0;
+                originalRequest = 0;
+            }else {
+                if ((rwRequest + originalRequest) != 0 && rwRequest * 100 / (rwRequest + originalRequest) < percent) {
+                    Collections.rotate(adUnitListing, -1);
+                }
+            }
+            loadMediationAd(originalId,adUnitListing.get(0),rwRequest,originalRequest);
         }
     }
 
@@ -110,19 +197,13 @@ public class AdManagerAdView extends BaseAdView {
     public final boolean zzb(zzbs var1) {
         return this.zza.zzz(var1);
     }
-    public void updateAdsWithRwFlow(View linearLayout) {
-        this.view = linearLayout;
-        String adUnitId = super.getAdUnitId();
-        AppConfiguration appConfiguration = AppConfiguration.getInstance(context);
-        if (appConfiguration.getAdsPosition().containsKey(adUnitId)) {
-            adUnitListing = appConfiguration.getAdsMediationListings().get(appConfiguration.getAdsPosition().get(adUnitId)).getMediationsAdunits();
-        }
-    }
 
-    private void loadMediationAd(String adUnitId){
+    private void loadMediationAd(String originalAdUnit,String adUnitId, Integer rwRequest, Integer originalRequest){
 
         AdSize adSize = super.getAdSize();
         AdManagerAdView adView = new AdManagerAdView(context);
+
+
         if (view instanceof LinearLayout) {
             ((LinearLayout) view).removeAllViews();
             ((LinearLayout) view).addView(adView);
@@ -142,7 +223,7 @@ public class AdManagerAdView extends BaseAdView {
         AdManagerAdRequest request = new AdManagerAdRequest.Builder().build();
         adView.setAdSize(adSize);
         adView.setAdUnitId(adUnitId);
-        adView.loadAd(request);
+        adView.loadAds(request);
         adView.setAdListener(new AdListener() {
             @Override
             public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
@@ -151,7 +232,7 @@ public class AdManagerAdView extends BaseAdView {
                 Log.d("TAG", "onAdFailedToLoad: "+ adUnitId);
                 for(int count =0;count<adUnitListing.size();count++){
                     if(adUnitListing.get(count).equalsIgnoreCase(adUnitId) && (count+1) < adUnitListing.size()){
-                        loadMediationAd(adUnitListing.get(count+1));
+                        loadMediationAd(originalAdUnit,adUnitListing.get(count+1),rwRequest,originalRequest);
                     }
                 }
             }
@@ -164,7 +245,147 @@ public class AdManagerAdView extends BaseAdView {
             @Override
             public void onAdLoaded() {
                 super.onAdLoaded();
+                Log.d("TAG", "onAdFailedToLoad:false "+ adUnitId);
+                if(originalAdUnit.equalsIgnoreCase(adUnitId)){
+                    Integer originalVal = originalRequest;
+                    RwAdsIntialize.saveIntegerShared(originalAdUnit+"_"+AdRequestOriginal, ++originalVal);
+                }else {
+                    Integer rwVal = rwRequest;
+                    RwAdsIntialize.saveIntegerShared(originalAdUnit+"_"+AdRequestReadWhere,++rwVal);
+                }
             }
         });
+    }
+
+    private void refreshAd(){
+        if (future != null)
+            future.cancel(false);
+
+        if (worker == null) {
+            worker = Executors.newSingleThreadScheduledExecutor();
+        }
+        future = worker.schedule(new Runnable() {
+            @Override
+            public void run() {
+                if (!((Activity)context).isDestroyed()) {
+                    ((Activity)context).runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            renderAds();
+                        }
+                    });
+                    refreshAd();
+                } else {
+                    detachBanner();
+                }
+            }
+        }, refreshInterval, TimeUnit.SECONDS);
+    }
+
+    private void loadAdInBulk(String adUnitId, int totalCount){
+        AdSize adSize = super.getAdSize();
+        AdManagerAdView adView = new AdManagerAdView(context);
+        AdManagerAdRequest request = new AdManagerAdRequest.Builder().build();
+        adView.setAdSize(adSize);
+        adView.setAdUnitId(adUnitId);
+        adView.loadAds(request);
+        adView.setAdListener(new AdListener() {
+            @Override
+            public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
+                super.onAdFailedToLoad(loadAdError);
+                Log.d("TAG", "onAdFailedToLoad: "+ adUnitId);
+                adView.setAdListener(null);
+                loadedCount++;
+                if(loadedCount == totalCount){
+                    showAdFromBulkList();
+                }
+            }
+
+            @Override
+            public void onAdOpened() {
+                super.onAdOpened();
+            }
+            @Override
+            public void onAdLoaded() {
+                super.onAdLoaded();
+                Log.d("TAG", "onAdFailedToLoad:false "+ adUnitId);
+                loadedCount++;
+                loadedAds.put(adUnitId,adView);
+                if(loadedCount == totalCount){
+                    showAdFromBulkList();
+                }
+            }
+        });
+    }
+
+    private AdManagerAdView checkOverWriteAdUnitId(){
+        String originalId = adUnitListing.get(0);
+        int percent = AppConfiguration.getInstance(context).getRw_overwrite();
+        int rwRequest = RwAdsIntialize.getIntegerShared(originalId+"_"+AdRequestReadWhere);
+        int originalRequest = RwAdsIntialize.getIntegerShared(originalId+"_"+AdRequestOriginal);
+
+        if(percent != 0 && (rwRequest+originalRequest) != 0 &&rwRequest * 100/(rwRequest+originalRequest) < percent){
+            Collections.rotate(adUnitListing,-1);
+        }
+        for(int count =0;count<adUnitListing.size();count++) {
+            if (loadedAds.containsKey(adUnitListing.get(count))) {
+                if(adUnitListing.get(count).equalsIgnoreCase(originalId)){
+                    RwAdsIntialize.saveIntegerShared(originalId+"_"+AdRequestOriginal,++originalRequest);
+                }else {
+                    RwAdsIntialize.saveIntegerShared(originalId+"_"+AdRequestReadWhere,++rwRequest);
+                }
+                return loadedAds.get(adUnitListing.get(count));
+            }
+        }
+        return  null;
+    }
+
+    protected void showAdFromBulkList() {
+        if (isLoaded || loadedAds.size() == 0) {
+            return;
+        }
+        AdManagerAdView adView = checkOverWriteAdUnitId();
+//        for(int count =0;count<adUnitListing.size();count++){
+//            if(loadedAds.containsKey(adUnitListing.get(count))){
+//                isLoaded = true;
+//                adView = loadedAds.get(adUnitListing.get(count));
+//                break;
+//            }
+//        }
+        if (adView != null) {
+            isLoaded = true;
+            if (view instanceof LinearLayout) {
+                ((LinearLayout) view).removeAllViews();
+                ((LinearLayout) view).addView(adView);
+            }
+            if (view instanceof RelativeLayout) {
+                ((RelativeLayout) view).removeAllViews();
+                ((RelativeLayout) view).addView(adView);
+            }
+            if (view instanceof ConstraintLayout) {
+                ((ConstraintLayout) view).removeAllViews();
+                ((ConstraintLayout) view).addView(adView);
+            }
+            if (view instanceof CardView) {
+                ((CardView) view).removeAllViews();
+                ((CardView) view).addView(adView);
+            }
+        }
+    }
+
+
+    private void detachBanner(){
+        try {
+            if (future != null) {
+                future.cancel(true);
+                future = null;
+            }
+            if (worker != null) {
+                worker.shutdown();
+                worker = null;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

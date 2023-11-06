@@ -21,19 +21,7 @@ public class RwNativeAdView {
             return;
         }
 
-        View view = (View) adView.getParent();
-        if (view instanceof LinearLayout) {
-            ((LinearLayout) view).removeAllViews();
-        }
-        if (view instanceof RelativeLayout) {
-            ((RelativeLayout) view).removeAllViews();
-        }
-        if (view instanceof ConstraintLayout) {
-            ((ConstraintLayout) view).removeAllViews();
-        }
-        if(view instanceof CardView){
-            ((CardView) view).removeAllViews();
-        }
+
         AdManagerAdView adManager = new AdManagerAdView(context);
 
         AdManagerAdRequest request = new AdManagerAdRequest.Builder().build();
@@ -46,9 +34,25 @@ public class RwNativeAdView {
         }else {
             adManager.setAdSizes(AdSize.BANNER);
         }
-        adManager.setAdUnitId(id);
-        adManager.updateAdsWithRwFlow(view);
+        View view = (View) adView.getParent();
+        if (view instanceof LinearLayout) {
+            ((LinearLayout) view).removeAllViews();
+            ((LinearLayout) view).addView(adManager);
+        }
+        if (view instanceof RelativeLayout) {
+            ((RelativeLayout) view).removeAllViews();
+            ((RelativeLayout) view).addView(adManager);
+        }
+        if (view instanceof ConstraintLayout) {
+            ((ConstraintLayout) view).removeAllViews();
+            ((ConstraintLayout) view).addView(adManager);
+        }
+        if(view instanceof CardView){
+            ((CardView) view).removeAllViews();
+            ((CardView) view).addView(adManager);
+        }
 
+        adManager.setAdUnitId(id);
         adManager.loadAd(request);
     }
 
