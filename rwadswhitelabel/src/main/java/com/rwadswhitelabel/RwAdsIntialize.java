@@ -67,7 +67,7 @@ public class RwAdsIntialize {
         });
     }
 
-    public static void init(@NotNull Activity mainActivity, @NotNull String rwAppId) {
+    public static void init(@NotNull Context mainActivity, @NotNull String rwAppId) {
         appContext = mainActivity;
 //        if(true){
 //            loadJSONFromAsset(mainActivity);
