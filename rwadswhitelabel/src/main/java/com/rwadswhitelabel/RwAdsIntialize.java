@@ -3,6 +3,7 @@ package com.rwadswhitelabel;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.text.TextUtils;
 
 import com.google.gson.Gson;
 import com.rwadswhitelabel.models.ConfigResponses;
@@ -57,12 +58,16 @@ public class RwAdsIntialize {
             }
             @Override
             public void onFailure(Call<ConfigResponses> call, Throwable t) {
-                ConfigResponses configResponses = new Gson().fromJson(getStringShared("config"),ConfigResponses.class);
-                AppConfiguration.getInstance(context).setAdsMediationListings(configResponses.getData());
-                AppConfiguration.getInstance(context).setRwOverWriteValue(configResponses.getRw_overwrite());
-                AppConfiguration.getInstance(context).setRequestBatch(configResponses.getRequestBatch()== 1);
-                AppConfiguration.getInstance(context).setAutoRefresh(configResponses.getAutoRefresh());
-                t.printStackTrace();
+                String config = getStringShared("config");
+                if(config!=null && !TextUtils.isEmpty(config)){
+                    ConfigResponses configResponses = new Gson().fromJson(getStringShared("config"),ConfigResponses.class);
+                    AppConfiguration.getInstance(context).setAdsMediationListings(configResponses.getData());
+                    AppConfiguration.getInstance(context).setRwOverWriteValue(configResponses.getRw_overwrite());
+                    AppConfiguration.getInstance(context).setRequestBatch(configResponses.getRequestBatch()== 1);
+                    AppConfiguration.getInstance(context).setAutoRefresh(configResponses.getAutoRefresh());
+                    t.printStackTrace();
+                }
+
             }
         });
     }
