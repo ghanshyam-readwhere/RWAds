@@ -267,7 +267,7 @@ public abstract class AdManagerInterstitialAd extends com.google.android.gms.ads
     }
 
     public void show(Activity activity){
-        if(bulkLoad ){
+        if(idsListing!=null && idsListing.size() > 0 && bulkLoad ){
             if ( loadedAds.size() == 0) {
                 return;
             }

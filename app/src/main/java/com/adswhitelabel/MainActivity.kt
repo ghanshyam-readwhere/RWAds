@@ -25,7 +25,7 @@ class MainActivity : AppCompatActivity() {
         val url =
             "https://d1mtg6picedtk1.cloudfront.net/mcms-apps-apk/Rw_Ads_Whitelabel/com.readwhere.whitelabel.punjabitribune.json"
 
-        RwAdsIntialize.init(this,url)
+        RwAdsIntialize.init(this,"")
         btnAdView.setOnClickListener {
             startActivity(Intent(this,AdViewActivity::class.java))
         }

@@ -28,7 +28,7 @@ import java.util.HashMap;
 public abstract class InterstitialAd extends com.google.android.gms.ads.interstitial.InterstitialAd {
     private static com.google.android.gms.ads.interstitial.InterstitialAd interstitial;
     private static ArrayList<String> idsListing = new ArrayList();
-    private static boolean bulkLoad = true;
+    private static boolean bulkLoad = false;
     private static int loadedCount =0;
     private static HashMap<String, com.google.android.gms.ads.interstitial.InterstitialAd> loadedAds = new HashMap<String, com.google.android.gms.ads.interstitial.InterstitialAd>();
     private static boolean isLoaded = false;
@@ -256,7 +256,7 @@ public abstract class InterstitialAd extends com.google.android.gms.ads.intersti
     }
 
     public void show(Activity activity){
-        if(bulkLoad ){
+        if(idsListing!=null && idsListing.size() > 0 && bulkLoad ){
             if ( loadedAds.size() == 0) {
                 return;
             }
