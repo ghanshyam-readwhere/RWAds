@@ -12,6 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.google.android.gms.ads.AdListener;
+import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.FullScreenContentCallback;
 import com.google.android.gms.ads.LoadAdError;
 import com.google.android.gms.ads.OnPaidEventListener;
@@ -31,6 +32,10 @@ public abstract class AdManagerInterstitialAd extends com.google.android.gms.ads
     private static int loadedCount =0;
     private static HashMap<String, com.google.android.gms.ads.admanager.AdManagerInterstitialAd> loadedAds = new HashMap<String, com.google.android.gms.ads.admanager.AdManagerInterstitialAd>();
     private static boolean isLoaded = false;
+    private static Context lastContext;
+    private static String lastAdUnitId;
+    private static AdManagerAdRequest lastAdRequest;
+    private static AdManagerInterstitialAdLoadCallback lastAloadCallback;
 
     @Nullable
     public abstract AppEventListener getAppEventListener();
@@ -40,6 +45,10 @@ public abstract class AdManagerInterstitialAd extends com.google.android.gms.ads
     }
 
     public static void load(@NonNull Context context, @NonNull String adUnitId, @NonNull AdManagerAdRequest adManagerAdRequest, @NonNull AdManagerInterstitialAdLoadCallback loadCallback) {
+        lastContext = context;
+        lastAdUnitId = adUnitId;
+        lastAdRequest = adManagerAdRequest;
+        lastAloadCallback = loadCallback;
         AppConfiguration appConfiguration = AppConfiguration.getInstance(context);
         if (appConfiguration.getAdsPosition().containsKey(adUnitId)) {
             idsListing = new ArrayList<>();
@@ -91,6 +100,14 @@ public abstract class AdManagerInterstitialAd extends com.google.android.gms.ads
                 super.onAdLoaded(adManagerInterstitialAd);
                 loadedCount++;
                 adManagerInterstitial = adManagerInterstitialAd;
+                adManagerInterstitialAd.setFullScreenContentCallback(new FullScreenContentCallback() {
+                    @Override
+                    public void onAdDismissedFullScreenContent() {
+                        super.onAdDismissedFullScreenContent();
+                        adManagerInterstitial = null;
+                        load(context,adUnitId,adManagerAdRequest,loadCallback);
+                    }
+                });
                 loadedAds.put(adUnitId,adManagerInterstitialAd);
                 if(loadedCount == totalCount) {
                     loadedCallback(loadCallback);
@@ -190,6 +207,14 @@ public abstract class AdManagerInterstitialAd extends com.google.android.gms.ads
                     }
                 }
                 adManagerInterstitial = adManagerInterstitialAd;
+                adManagerInterstitialAd.setFullScreenContentCallback(new FullScreenContentCallback() {
+                    @Override
+                    public void onAdDismissedFullScreenContent() {
+                        super.onAdDismissedFullScreenContent();
+                        adManagerInterstitial = null;
+                        load(context,adUnitId,adManagerAdRequest,loadCallback);
+                    }
+                });
                 loadCallback.onAdLoaded(new AdManagerInterstitialAd() {
                     @Nullable
                     @Override
@@ -269,12 +294,23 @@ public abstract class AdManagerInterstitialAd extends com.google.android.gms.ads
     public void show(Activity activity){
         if(idsListing!=null && idsListing.size() > 0 && bulkLoad ){
             if ( loadedAds.size() == 0) {
+                load(lastContext,lastAdUnitId,lastAdRequest,lastAloadCallback);
                 return;
             }
-            checkOverWriteAdUnitId(activity).show(activity);
+            com.google.android.gms.ads.admanager.AdManagerInterstitialAd interstitialAd = checkOverWriteAdUnitId(activity);
+            if(interstitialAd!=null){
+                interstitialAd.show(activity);
+                loadedAds.clear();
+            }else {
+                load(lastContext,lastAdUnitId,lastAdRequest,lastAloadCallback);
+            }
 
         }else {
-            adManagerInterstitial.show(activity);
+            if(adManagerInterstitial!=null){
+                adManagerInterstitial.show(activity);
+            }else {
+                load(lastContext,lastAdUnitId,lastAdRequest,lastAloadCallback);
+            }
         }
 
     }

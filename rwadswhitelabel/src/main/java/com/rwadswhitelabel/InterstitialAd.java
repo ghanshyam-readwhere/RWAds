@@ -28,10 +28,14 @@ import java.util.HashMap;
 public abstract class InterstitialAd extends com.google.android.gms.ads.interstitial.InterstitialAd {
     private static com.google.android.gms.ads.interstitial.InterstitialAd interstitial;
     private static ArrayList<String> idsListing = new ArrayList();
-    private static boolean bulkLoad = false;
+    private static boolean bulkLoad = true;
     private static int loadedCount =0;
     private static HashMap<String, com.google.android.gms.ads.interstitial.InterstitialAd> loadedAds = new HashMap<String, com.google.android.gms.ads.interstitial.InterstitialAd>();
     private static boolean isLoaded = false;
+    private static Context lastContext;
+    private static String lastAdUnitId;
+    private static AdRequest lastAdRequest;
+    private static InterstitialAdLoadCallback lastAloadCallback;
 
     @Nullable
     public abstract FullScreenContentCallback getFullScreenContentCallback();
@@ -49,6 +53,10 @@ public abstract class InterstitialAd extends com.google.android.gms.ads.intersti
     }
 
     public static void load(@NonNull Context context, @NonNull String adUnitId, @NonNull AdRequest adRequest, @NonNull InterstitialAdLoadCallback loadCallback) {
+        lastContext = context;
+        lastAdUnitId = adUnitId;
+        lastAdRequest = adRequest;
+        lastAloadCallback = loadCallback;
         AppConfiguration appConfiguration = AppConfiguration.getInstance(context);
         if (appConfiguration.getAdsPosition().containsKey(adUnitId)) {
             idsListing = new ArrayList<>();
@@ -89,6 +97,7 @@ public abstract class InterstitialAd extends com.google.android.gms.ads.intersti
             @Override
             public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
                 super.onAdFailedToLoad(loadAdError);
+                Log.d("TAG", "onAdFailedToLoad: "+ adUnitId);
                 loadedCount++;
                 if(loadedCount == totalCount) {
                     loadedCallback(loadCallback);
@@ -98,8 +107,17 @@ public abstract class InterstitialAd extends com.google.android.gms.ads.intersti
             @Override
             public void onAdLoaded(@NonNull com.google.android.gms.ads.interstitial.InterstitialAd interstitialAd) {
                 super.onAdLoaded(interstitialAd);
+                Log.d("TAG", "onAdFailedToLoad:false "+ adUnitId);
                 loadedCount++;
                 interstitial = interstitialAd;
+                interstitialAd.setFullScreenContentCallback(new FullScreenContentCallback() {
+                    @Override
+                    public void onAdDismissedFullScreenContent() {
+                        super.onAdDismissedFullScreenContent();
+                        interstitial = null;
+                        load(context,adUnitId,adRequest,loadCallback);
+                    }
+                });
                 loadedAds.put(adUnitId,interstitial);
                 if(loadedCount == totalCount) {
                     loadedCallback(loadCallback);
@@ -188,6 +206,14 @@ public abstract class InterstitialAd extends com.google.android.gms.ads.intersti
                     }
                 }
                 interstitial = interstitialAd;
+                interstitialAd.setFullScreenContentCallback(new FullScreenContentCallback() {
+                    @Override
+                    public void onAdDismissedFullScreenContent() {
+                        super.onAdDismissedFullScreenContent();
+                            interstitial = null;
+                            load(context,adUnitId,adRequest,loadCallback);
+                    }
+                });
                 loadCallback.onAdLoaded(new InterstitialAd() {
                     @Nullable
                     @Override
@@ -258,9 +284,16 @@ public abstract class InterstitialAd extends com.google.android.gms.ads.intersti
     public void show(Activity activity){
         if(idsListing!=null && idsListing.size() > 0 && bulkLoad ){
             if ( loadedAds.size() == 0) {
+                load(lastContext,lastAdUnitId,lastAdRequest,lastAloadCallback);
                 return;
             }
-            checkOverWriteAdUnitId(activity).show(activity);
+            com.google.android.gms.ads.interstitial.InterstitialAd interstitialAd = checkOverWriteAdUnitId(activity);
+            if(interstitialAd!=null){
+                interstitialAd.show(activity);
+                loadedAds.clear();
+            }else {
+                load(lastContext,lastAdUnitId,lastAdRequest,lastAloadCallback);
+            }
 
         }
 //        if(bulkLoad ){
@@ -272,7 +305,11 @@ public abstract class InterstitialAd extends com.google.android.gms.ads.intersti
 //            }
 //        }
         else {
-            interstitial.show(activity);
+            if(interstitial!=null){
+                interstitial.show(activity);
+            }else {
+                load(lastContext,lastAdUnitId,lastAdRequest,lastAloadCallback);
+            }
         }
 
     }
