@@ -1,8 +1,8 @@
 package com.adswhitelabel
 
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatButton
 import com.rwadswhitelabel.RwAdsIntialize
 
@@ -22,7 +22,10 @@ class MainActivity : AppCompatActivity() {
         btnInt = findViewById(R.id.btnInt)
         btnAdMobInt = findViewById(R.id.btnAdMobInt)
         btnNativeAds = findViewById(R.id.btnNativeAds)
-        RwAdsIntialize.init(this,"")
+        val url =
+            "https://d1mtg6picedtk1.cloudfront.net/mcms-apps-apk/Rw_Ads_Whitelabel/com.readwhere.whitelabel.punjabitribune.json"
+
+        RwAdsIntialize.init(this,url)
         btnAdView.setOnClickListener {
             startActivity(Intent(this,AdViewActivity::class.java))
         }

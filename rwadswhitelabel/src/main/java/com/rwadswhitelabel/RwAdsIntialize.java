@@ -25,8 +25,8 @@ public class RwAdsIntialize {
     public static  String AdRequestOriginal = "ad_request_original";
     public static  String AdRequestReadWhere = "ad_request_rw";
 
-    private static void getAppConfig(Context context,String rwAppId){
-        Call<ConfigResponses> call = RetrofitClient.INSTANCE.getApiInterface().getAppConfig(context.getPackageName());
+    private static void getAppConfig(Context context,String appUrl){
+        Call<ConfigResponses> call = RetrofitClient.INSTANCE.getApiInterface().getAppConfig(appUrl);
         call.enqueue(new Callback<ConfigResponses>() {
             @Override
             public void onResponse(Call<ConfigResponses> call, Response<ConfigResponses> response) {
