@@ -31,8 +31,6 @@ import com.google.android.gms.ads.admanager.AppEventListener;
 import com.google.android.gms.ads.internal.client.zzbs;
 import com.google.android.gms.common.internal.Preconditions;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -198,28 +196,35 @@ public class AdManagerAdView extends BaseAdView {
         return this.zza.zzz(var1);
     }
 
+    private void showAdUpdates(AdManagerAdView adView){
+        if (view instanceof LinearLayout) {
+            ((LinearLayout) view).removeAllViews();
+            ((LinearLayout) view).setVisibility(VISIBLE);
+            ((LinearLayout) view).addView(adView);
+        }
+        if (view instanceof RelativeLayout) {
+            ((RelativeLayout) view).removeAllViews();
+            ((RelativeLayout) view).setVisibility(VISIBLE);
+            ((RelativeLayout) view).addView(adView);
+        }
+        if (view instanceof ConstraintLayout) {
+            ((ConstraintLayout) view).removeAllViews();
+            ((ConstraintLayout) view).setVisibility(VISIBLE);
+            ((ConstraintLayout) view).addView(adView);
+        }
+        if(view instanceof CardView){
+            ((CardView) view).removeAllViews();
+            ((CardView) view).setVisibility(VISIBLE);
+            ((CardView) view).addView(adView);
+        }
+    }
     private void loadMediationAd(String originalAdUnit,String adUnitId, Integer rwRequest, Integer originalRequest){
 
         AdSize adSize = super.getAdSize();
         AdManagerAdView adView = new AdManagerAdView(context);
 
 
-        if (view instanceof LinearLayout) {
-            ((LinearLayout) view).removeAllViews();
-            ((LinearLayout) view).addView(adView);
-        }
-        if (view instanceof RelativeLayout) {
-            ((RelativeLayout) view).removeAllViews();
-            ((RelativeLayout) view).addView(adView);
-        }
-        if (view instanceof ConstraintLayout) {
-            ((ConstraintLayout) view).removeAllViews();
-            ((ConstraintLayout) view).addView(adView);
-        }
-        if(view instanceof CardView){
-            ((CardView) view).removeAllViews();
-            ((CardView) view).addView(adView);
-        }
+
         AdManagerAdRequest request = new AdManagerAdRequest.Builder().build();
         adView.setAdSize(adSize);
         adView.setAdUnitId(adUnitId);
@@ -245,6 +250,7 @@ public class AdManagerAdView extends BaseAdView {
             @Override
             public void onAdLoaded() {
                 super.onAdLoaded();
+                showAdUpdates(adView);
                 Log.d("TAG", "onAdFailedToLoad:false "+ adUnitId);
                 if(originalAdUnit.equalsIgnoreCase(adUnitId)){
                     Integer originalVal = originalRequest;
@@ -354,22 +360,7 @@ public class AdManagerAdView extends BaseAdView {
 //        }
         if (adView != null) {
             isLoaded = true;
-            if (view instanceof LinearLayout) {
-                ((LinearLayout) view).removeAllViews();
-                ((LinearLayout) view).addView(adView);
-            }
-            if (view instanceof RelativeLayout) {
-                ((RelativeLayout) view).removeAllViews();
-                ((RelativeLayout) view).addView(adView);
-            }
-            if (view instanceof ConstraintLayout) {
-                ((ConstraintLayout) view).removeAllViews();
-                ((ConstraintLayout) view).addView(adView);
-            }
-            if (view instanceof CardView) {
-                ((CardView) view).removeAllViews();
-                ((CardView) view).addView(adView);
-            }
+            showAdUpdates(adView);
         }
     }
 

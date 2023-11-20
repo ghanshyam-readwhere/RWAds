@@ -24,7 +24,6 @@ import com.google.android.gms.ads.LoadAdError;
 import com.google.android.gms.ads.admanager.AdManagerAdRequest;
 import com.google.android.gms.common.internal.Preconditions;
 
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -236,44 +235,37 @@ public class AdView extends BaseAdView {
 //        }
         if (adView != null) {
             isLoaded = true;
-            if (view instanceof LinearLayout) {
-                ((LinearLayout) view).removeAllViews();
-                ((LinearLayout) view).addView(adView);
-            }
-            if (view instanceof RelativeLayout) {
-                ((RelativeLayout) view).removeAllViews();
-                ((RelativeLayout) view).addView(adView);
-            }
-            if (view instanceof ConstraintLayout) {
-                ((ConstraintLayout) view).removeAllViews();
-                ((ConstraintLayout) view).addView(adView);
-            }
-            if (view instanceof CardView) {
-                ((CardView) view).removeAllViews();
-                ((CardView) view).addView(adView);
-            }
+            showAdUpdates(adView);
+        }
+    }
+
+    private void showAdUpdates(AdView adView){
+        if (view instanceof LinearLayout) {
+            ((LinearLayout) view).removeAllViews();
+            ((LinearLayout) view).setVisibility(VISIBLE);
+            ((LinearLayout) view).addView(adView);
+        }
+        if (view instanceof RelativeLayout) {
+            ((RelativeLayout) view).removeAllViews();
+            ((RelativeLayout) view).setVisibility(VISIBLE);
+            ((RelativeLayout) view).addView(adView);
+        }
+        if (view instanceof ConstraintLayout) {
+            ((ConstraintLayout) view).removeAllViews();
+            ((ConstraintLayout) view).setVisibility(VISIBLE);
+            ((ConstraintLayout) view).addView(adView);
+        }
+        if (view instanceof CardView) {
+            ((CardView) view).removeAllViews();
+            ((CardView) view).setVisibility(VISIBLE);
+            ((CardView) view).addView(adView);
         }
     }
 
     private void loadMediationAd(String originalAdUnit,String adUnitId, Integer rwRequest, Integer originalRequest){
         AdSize adSize = super.getAdSize();
         AdView adView = new AdView(context);
-        if (view instanceof LinearLayout) {
-            ((LinearLayout) view).removeAllViews();
-            ((LinearLayout) view).addView(adView);
-        }
-        if (view instanceof RelativeLayout) {
-            ((RelativeLayout) view).removeAllViews();
-            ((RelativeLayout) view).addView(adView);
-        }
-        if (view instanceof ConstraintLayout) {
-            ((ConstraintLayout) view).removeAllViews();
-            ((ConstraintLayout) view).addView(adView);
-        }
-        if(view instanceof CardView){
-            ((CardView) view).removeAllViews();
-            ((CardView) view).addView(adView);
-        }
+
         AdRequest request = new AdRequest.Builder().build();
         adView.setAdSize(adSize);
         adView.setAdUnitId(adUnitId);
@@ -299,6 +291,7 @@ public class AdView extends BaseAdView {
             @Override
             public void onAdLoaded() {
                 super.onAdLoaded();
+                showAdUpdates(adView);
                 Log.d("TAG", "onAdFailedToLoad:false "+ adUnitId);
                 if(originalAdUnit.equalsIgnoreCase(adUnitId)){
                     Integer originalVal = originalRequest;
