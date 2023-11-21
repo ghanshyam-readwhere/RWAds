@@ -36,6 +36,7 @@ public abstract class InterstitialAd extends com.google.android.gms.ads.intersti
     private static String lastAdUnitId;
     private static AdRequest lastAdRequest;
     private static InterstitialAdLoadCallback lastAloadCallback;
+    private static OnAdClosed anInterface;
 
     @Nullable
     public abstract FullScreenContentCallback getFullScreenContentCallback();
@@ -114,6 +115,9 @@ public abstract class InterstitialAd extends com.google.android.gms.ads.intersti
                     @Override
                     public void onAdDismissedFullScreenContent() {
                         super.onAdDismissedFullScreenContent();
+                        if(anInterface!=null){
+                            anInterface.onAdClosed();
+                        }
                         interstitial = null;
                         load(context,adUnitId,adRequest,loadCallback);
                     }
@@ -211,6 +215,9 @@ public abstract class InterstitialAd extends com.google.android.gms.ads.intersti
                     public void onAdDismissedFullScreenContent() {
                         super.onAdDismissedFullScreenContent();
                             interstitial = null;
+                         if(anInterface!=null){
+                             anInterface.onAdClosed();
+                         }
                             load(context,adUnitId,adRequest,loadCallback);
                     }
                 });
@@ -320,5 +327,12 @@ public abstract class InterstitialAd extends com.google.android.gms.ads.intersti
 
     public abstract void setOnPaidEventListener(@Nullable OnPaidEventListener var1);
 
+    public static void setInterface(OnAdClosed interfaces) {
+        anInterface = interfaces;
+    }
 
+    public interface OnAdClosed {
+        void onAdClosed();
+
+    }
 }

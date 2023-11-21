@@ -36,6 +36,7 @@ public abstract class AdManagerInterstitialAd extends com.google.android.gms.ads
     private static String lastAdUnitId;
     private static AdManagerAdRequest lastAdRequest;
     private static AdManagerInterstitialAdLoadCallback lastAloadCallback;
+    private static InterstitialAd.OnAdClosed anInterface;
 
     @Nullable
     public abstract AppEventListener getAppEventListener();
@@ -105,6 +106,9 @@ public abstract class AdManagerInterstitialAd extends com.google.android.gms.ads
                     public void onAdDismissedFullScreenContent() {
                         super.onAdDismissedFullScreenContent();
                         adManagerInterstitial = null;
+                        if(anInterface!=null){
+                            anInterface.onAdClosed();
+                        }
                         load(context,adUnitId,adManagerAdRequest,loadCallback);
                     }
                 });
@@ -212,6 +216,9 @@ public abstract class AdManagerInterstitialAd extends com.google.android.gms.ads
                     public void onAdDismissedFullScreenContent() {
                         super.onAdDismissedFullScreenContent();
                         adManagerInterstitial = null;
+                        if(anInterface!=null){
+                            anInterface.onAdClosed();
+                        }
                         load(context,adUnitId,adManagerAdRequest,loadCallback);
                     }
                 });
@@ -312,6 +319,14 @@ public abstract class AdManagerInterstitialAd extends com.google.android.gms.ads
                 load(lastContext,lastAdUnitId,lastAdRequest,lastAloadCallback);
             }
         }
+
+    }
+    public static void setInterface(InterstitialAd.OnAdClosed interfaces) {
+        anInterface = interfaces;
+    }
+
+    public interface OnAdClosed {
+        void onAdClosed();
 
     }
 

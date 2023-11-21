@@ -69,7 +69,11 @@ class MainActivity : AppCompatActivity() {
                         mInterstitialAd = null
                     }
                 })
-        },2000);
+            InterstitialAd.setInterface(InterstitialAd.OnAdClosed {
+                Log.d("TAG", "onAdClosed")
+            })
+        },2000)
+
 
 
     }
