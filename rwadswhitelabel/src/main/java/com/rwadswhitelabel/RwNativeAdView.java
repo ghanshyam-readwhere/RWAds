@@ -28,11 +28,11 @@ public class RwNativeAdView {
 
         int height = adView.getHeight();
         if((height /context.getResources().getDisplayMetrics().density ) > 250){
-            adManager.setAdSizes(AdSize.MEDIUM_RECTANGLE);
+            adManager.setAdSize(AdSize.MEDIUM_RECTANGLE);
         }else if((height /context.getResources().getDisplayMetrics().density ) > 100){
-            adManager.setAdSizes(AdSize.LARGE_BANNER);
+            adManager.setAdSize(AdSize.LARGE_BANNER);
         }else {
-            adManager.setAdSizes(AdSize.BANNER);
+            adManager.setAdSize(AdSize.BANNER);
         }
         View view = (View) adView.getParent();
         if (view instanceof LinearLayout) {
