@@ -28,10 +28,10 @@
       ]
     },
     {
-      "original_id": "/1009127/Readwhere_App_Banner_android_home_bottom",
+      "original_id": "ca-app-pub-2931203390134969/2808545681",
       "ad_server": "ad_manager",
-      "switch_bet_native_to_banner": 0,
-      "is_native": 0,
+      "switch_bet_native_to_banner": 1,
+      "is_native": 1,
       "mediations_adunits": [
         "/1009127/Readwhere_App_Banner_android_home_bottom",
         "/1009127/rw_home_bottom_0.8",

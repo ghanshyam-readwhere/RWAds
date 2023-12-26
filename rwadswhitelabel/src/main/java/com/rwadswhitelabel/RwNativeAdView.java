@@ -1,5 +1,7 @@
 package com.rwadswhitelabel;
 
+import static android.view.View.VISIBLE;
+
 import android.content.Context;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -35,6 +37,7 @@ public class RwNativeAdView {
             adManager.setAdSize(AdSize.BANNER);
         }
         View view = (View) adView.getParent();
+        view.setVisibility(View.GONE);
         if (view instanceof LinearLayout) {
             ((LinearLayout) view).removeAllViews();
             ((LinearLayout) view).addView(adManager);
