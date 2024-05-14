@@ -186,5 +186,9 @@
 
     </com.google.android.gms.ads.nativead.NativeAdView>
 
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/media_placeholder"/>
 
 </androidx.cardview.widget.CardView>

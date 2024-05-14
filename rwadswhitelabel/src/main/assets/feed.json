@@ -2,16 +2,16 @@
   "status": true,
   "rw_overwrite": 0,
   "request_batch": 0,
-  "auto_refresh": 10,
+  "auto_refresh": 60,
   "data": [
     {
-      "original_id": "csde",
+      "original_id": "/6499/example/banner",
       "ad_server": "ad_manager",
       "switch_bet_native_to_banner": 1,
       "is_native": 1,
       "mediations_adunits": [
-        "/6499/example/bannerr",
         "/6499/example/banner",
+        "/6499/example/bannerr",
         "/1009127/rw_home_top_0.8",
         "/1009127/rw_home_top_0.6",
         "/1009127/Readwhere_App_Banner_android_home_top"

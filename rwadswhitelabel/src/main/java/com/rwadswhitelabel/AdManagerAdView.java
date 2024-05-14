@@ -5,12 +5,15 @@ import static com.rwadswhitelabel.RwAdsIntialize.AdRequestReadWhere;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Color;
 import android.os.Handler;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -200,22 +203,22 @@ public class AdManagerAdView extends BaseAdView {
         if (view instanceof LinearLayout) {
             ((LinearLayout) view).removeAllViews();
             ((LinearLayout) view).setVisibility(VISIBLE);
-            ((LinearLayout) view).addView(adView);
+            ((LinearLayout) view).addView(updateAdSlotUI(context,adView));
         }
         if (view instanceof RelativeLayout) {
             ((RelativeLayout) view).removeAllViews();
             ((RelativeLayout) view).setVisibility(VISIBLE);
-            ((RelativeLayout) view).addView(adView);
+            ((RelativeLayout) view).addView(updateAdSlotUI(context,adView));
         }
         if (view instanceof ConstraintLayout) {
             ((ConstraintLayout) view).removeAllViews();
             ((ConstraintLayout) view).setVisibility(VISIBLE);
-            ((ConstraintLayout) view).addView(adView);
+            ((ConstraintLayout) view).addView(updateAdSlotUI(context,adView));
         }
         if(view instanceof CardView){
             ((CardView) view).removeAllViews();
             ((CardView) view).setVisibility(VISIBLE);
-            ((CardView) view).addView(adView);
+            ((CardView) view).addView(updateAdSlotUI(context,adView));
         }
     }
     private void loadMediationAd(String originalAdUnit,String adUnitId, Integer rwRequest, Integer originalRequest){
@@ -379,4 +382,22 @@ public class AdManagerAdView extends BaseAdView {
             e.printStackTrace();
         }
     }
+
+    private LinearLayout updateAdSlotUI(Context _activity, View adView){
+        LinearLayout linearLayout = new LinearLayout(_activity);
+        linearLayout.setOrientation(LinearLayout.VERTICAL);
+        linearLayout.setPadding(0,10,0,30);
+        linearLayout.setBackgroundColor(_activity.getResources().getColor(R.color.adv_bg));
+        TextView textView = new TextView(_activity);
+        textView.setText("ADVERTISEMENT");
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        lp.gravity = Gravity.CENTER_HORIZONTAL;
+        lp.bottomMargin = 10;
+        textView.setLayoutParams(lp);
+        textView.setTextColor(Color.parseColor("#888888"));
+        linearLayout.addView(textView);
+        linearLayout.addView(adView);
+        return  linearLayout;
+    }
+
 }
