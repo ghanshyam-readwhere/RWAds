@@ -56,6 +56,7 @@ public class AdManagerAdView extends BaseAdView {
     private ScheduledExecutorService worker = Executors.newSingleThreadScheduledExecutor();
     private ScheduledFuture future;
     private int refreshInterval = 0;
+    private boolean renderBg = true;
 
 
     @NonNull
@@ -169,6 +170,9 @@ public class AdManagerAdView extends BaseAdView {
         this.zza.zzo();
     }
 
+    public void setRenderBg(boolean renderBg){
+        this.renderBg = renderBg;
+    }
     public void setAdSizes(@NonNull AdSize... adSizes) {
         if (adSizes != null && adSizes.length > 0) {
             this.zza.zzt(adSizes);
@@ -383,7 +387,10 @@ public class AdManagerAdView extends BaseAdView {
         }
     }
 
-    private LinearLayout updateAdSlotUI(Context _activity, View adView){
+    private View updateAdSlotUI(Context _activity, View adView){
+        if(!renderBg){
+            return  adView;
+        }
         LinearLayout linearLayout = new LinearLayout(_activity);
         linearLayout.setOrientation(LinearLayout.VERTICAL);
         linearLayout.setPadding(0,10,0,30);

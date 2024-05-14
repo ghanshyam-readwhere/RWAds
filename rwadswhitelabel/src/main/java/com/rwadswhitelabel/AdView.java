@@ -49,6 +49,7 @@ public class AdView extends BaseAdView {
     private ScheduledExecutorService worker = Executors.newSingleThreadScheduledExecutor();
     private ScheduledFuture future;
     private int refreshInterval = 0;
+    private boolean renderBg = true;
 
     public AdView(@NonNull Context context) {
         super(context, 0);
@@ -163,6 +164,11 @@ public class AdView extends BaseAdView {
         }
 
     }
+
+    public void setRenderBg(boolean renderBg){
+        this.renderBg = renderBg;
+    }
+
     private void loadAdInBulk(String adUnitId, int totalCount){
         AdSize adSize = super.getAdSize();
         AdView adView = new AdView(context);
@@ -348,7 +354,10 @@ public class AdView extends BaseAdView {
         }
     }
 
-    private LinearLayout updateAdSlotUI(Context _activity, View adView){
+    private View updateAdSlotUI(Context _activity, View adView){
+        if(!renderBg){
+            return  adView;
+        }
         LinearLayout linearLayout = new LinearLayout(_activity);
         linearLayout.setOrientation(LinearLayout.VERTICAL);
         linearLayout.setPadding(0,10,0,30);
